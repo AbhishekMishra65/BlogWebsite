@@ -1,0 +1,37 @@
+<div class="form-floating ms-4 my-3 col-4">
+    <input type="text" class="form-control" id="floatingInput" placeholder="Search" [(ngModel)]="searchtext">
+    <label for="floatingInput">Search Blogpost</label>
+</div>
+<div class="conatiner m-4">
+    <div class="my-2" *ngIf="model">
+        <div class="row align-items-strech">
+            <!-- <ng-container *ngIf="blogs$ | async as blogs"> -->
+            <div class="col-12 col-md-4 mb-3" *ngFor="let blog of model | paginate:                 {id:'listing_pagination',
+                itemsPerPage: 3,
+                currentPage:page,
+                totalItems:totalRecords}">
+                <div class="card h-100"
+                    *ngIf="searchtext==='' || blog.title.toLowerCase().includes(searchtext.toLowerCase())">
+                    <img [src]="blog.featuredImageUrl" class="card-img-top" [alt]="blog.title"
+                        [routerLink]="['/blog',blog.urlHandle]" style="cursor: pointer;">
+
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">
+                            {{blog.title}}
+                        </h5>
+                        <p class="card-title">{{blog.shortDescription}}</p>
+                        <span class="d-flex align-items-end" style="flex:1">
+                            <a [routerLink]="['/blog',blog.urlHandle]" class="btn btn-primary">Read More</a>
+                            <a *ngIf="user!==undefined && user?.roles?.includes('Writer')"
+                                [routerLink]="['/admin/blogposts',blog.id]" class="btn btn-dark ms-2">Edit</a>
+                        </span>
+
+                    </div>
+                </div>
+            </div>
+            <!-- </ng-container> -->
+        </div>
+    </div>
+    <pagination-controls id="listing_pagination" (pageChange)="page = $event"></pagination-controls>
+
+</div>

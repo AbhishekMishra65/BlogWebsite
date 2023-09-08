@@ -1,0 +1,111 @@
+<div class="container">
+    <h1 class="mt-3">Edit BlogPost</h1>
+
+
+
+    <ng-container *ngIf="model; else notFound">
+        <form #form="ngForm" (ngSubmit)="onFormSubmit()">
+            <div class="mt-2 mb-5">
+                <div class="mt-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" id="title" name="title" class="form-control" [(ngModel)]="model.title">
+                </div>
+
+                <div class="mt-3">
+                    <label for="urlHandle" class="form-label">Url Handle</label>
+                    <input type="text" id="urlHandle" name="urlHandle" class="form-control"
+                        [(ngModel)]="model.urlHandle">
+                </div>
+
+                <div class="mt-3">
+                    <label for="shortDescription" class="form-label">Short Description</label>
+                    <input type="text" id="shortDescription" name="shortDescription" class="form-control"
+                        [(ngModel)]="model.shortDescription">
+                </div>
+
+                <div class="mt-3">
+                    <label for="content" class="form-label">Content</label>
+                    <!-- <textarea id="content" name="content" class="form-control" [(ngModel)]="model.content"></textarea> -->
+                    <div class="d-flex flex-row">
+
+                        <div class="col-6 p-2">
+                            <textarea id="content" name="content" class="form-control"
+                                style="height: 350px; max-height:350px;" [(ngModel)]="model.content"></textarea>
+                        </div>
+                        <div class="col-6 p-2" style="max-height: 350px; overflow-y:scroll;">
+                            <markdown [data]="model.content"></markdown>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <label for="featuredImageUrl" class="form-label">Featured Image Url
+                        <button type="button" class="btn btn-light" (click)="openImageSelector()">Select Image</button>
+                    </label>
+                    <ng-container *ngIf="model.featuredImageUrl!=='' ">
+                        <div>
+                            <img [src]="model.featuredImageUrl" alt="Image not Found" height="100" class="my-2">
+                        </div>
+                    </ng-container>
+                    <input type="text" id="featuredImageUrl" name="featuredImageUrl" class="form-control"
+                        [(ngModel)]="model.featuredImageUrl">
+                </div>
+
+                <div class="mt-3">
+                    <label for="publishedDate" class="form-label">Published Date</label>
+                    <input type="date" id="publishedDate" name="publishedDate" class="form-control"
+                        value="{{model.publishedDate}}" [ngModel]="model.publishedDate | date: 'yyyy-MM-dd' "
+                        (ngModelChange)="model.publishedDate=$event">
+                    <!-- Whenever a change happens in ngModel, Angular will trigger ngModelChange event -->
+                    <!-- here we are using value to give a initial value -->
+                    <!-- [ngModel] this is one way data binding which means it is only accepting the updated value or it will pass the new value  -->
+                </div>
+
+                <div class="mt-3">
+                    <label for="author" class="form-label">Author</label>
+                    <input type="text" id="author" name="author" class="form-control" [(ngModel)]="model.author">
+                </div>
+
+                <div class="form-check mt-3">
+                    <input class="form-check-input" name="isVisible" type="checkbox" id="isVisible"
+                        [(ngModel)]="model.isVisible">
+                    <label class="form-check-label" for="isVisible">
+                        Is Visible?
+                    </label>
+                </div>
+
+                <div class="mt-3">
+                    <label for="categories" class="form-label">Categories</label>
+                    <ng-container *ngIf="categories$ | async as categories">
+                        <!-- <select name="categories" id="categories" class="form-control" multiple>
+                        <option *ngFor="let category of categories" [value]="category.id" >{{category.name}}</option>
+                    </select> -->
+                    <!-- name="{{category.name}}"  -->
+                    <!-- (change)="onChange(category.id)" -->
+                        <div *ngFor="let category of categories">
+                            <input type="checkbox" (change)="onChange(category.id)"  value="{{category.id}}" name="{{category.name}}"
+                                class="form-check-input" />{{category.name}}
+                        </div>
+                    </ng-container>
+                </div>
+
+                <div class="mt-3 d-flex">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button (click)="onDelete()" class="btn btn-danger ms-3">Delete</button>
+                </div>
+
+
+            </div>
+        </form>
+    </ng-container>
+    <ng-template #notFound>
+        <div class="alert alert-warning" role="alert">
+            BlogPost not found
+        </div>
+    </ng-template>
+</div>
+
+<div class="images-container-modal" [ngClass]="{'d-block':isImageSelectorVisible, 'd-none':!isImageSelectorVisible}">
+    <button class="btn btn-light" type="button" style="position: fixed; top:10px; right:10px" (click)="closeImageSelector()" >X</button>
+    <app-image-selector></app-image-selector>
+</div>
